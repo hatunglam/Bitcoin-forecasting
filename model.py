@@ -4,6 +4,7 @@ from tensorflow.keras.layers  import *
 from tensorflow.keras.losses import MeanSquaredError 
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
+import keras_tuner as kt
 
 def close_price_model(df, wind_size=30):
     df_np = df
@@ -25,4 +26,56 @@ def vanilla_model(X_train):
 
     model.summary()
 
+    return model
+
+def build_model(hp):
+    model = Sequential()
+    model.add(InputLayer((X_train.shape[1], X_train.shape[2])))
+    
+    lstm_units = hp.Choice('lstm_units', values=[32, 64, 128])
+    model.add(LSTM(lstm_units, return_sequences=True))
+    
+    dropout_rate = hp.Choice('dropout_rate', values=[0.0, 0.2, 0.4])
+    model.add(Dropout(dropout_rate))
+    
+    model.add(LSTM(lstm_units))
+    model.add(Dropout(dropout_rate))
+    
+    activation_function = hp.Choice('activation_function', values=['relu', 'tanh'])
+    dense_units = hp.Choice('dense_units', values=[8, 16, 32, 64])  
+    model.add(Dense(dense_units, activation=activation_function))
+    model.add(Dense(1, activation='linear'))
+    
+    learning_rate = hp.Choice('learning_rate', values=[0.001, 0.01, 0.1])
+    model.compile(
+        loss=MeanSquaredError(),
+        optimizer=Adam(learning_rate=learning_rate),
+        metrics=[RootMeanSquaredError()]
+    )
+    return model
+
+def build_model_vol1(hp):
+    model = Sequential()
+    model.add(InputLayer((X_train.shape[1], X_train.shape[2])))
+    
+    lstm_units = hp.Choice('lstm_units', values=[32, 64, 128, 256])
+    model.add(LSTM(lstm_units, return_sequences=True))
+    
+    dropout_rate = hp.Choice('dropout_rate', values=[0.0, 0.2, 0.4])
+    model.add(Dropout(dropout_rate))
+    
+    model.add(LSTM(lstm_units))
+    model.add(Dropout(dropout_rate))
+    
+    activation_function = hp.Choice('activation_function', values=['relu', 'tanh'])
+    dense_units = hp.Choice('dense_units', values=[16, 32, 64])  
+    model.add(Dense(dense_units, activation=activation_function))
+    model.add(Dense(1, activation='linear'))
+    
+    learning_rate = hp.Choice('learning_rate', values=[0.001, 0.01, 0.1])
+    model.compile(
+        loss=MeanSquaredError(),
+        optimizer=Adam(learning_rate=learning_rate),
+        metrics=[RootMeanSquaredError()]
+    )
     return model
