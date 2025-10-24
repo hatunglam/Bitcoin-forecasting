@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers  import *
+from tensorflow.keras.layers import LSTM, Dense, InputLayer, Dropout
 from tensorflow.keras.losses import MeanSquaredError 
 from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
@@ -29,7 +30,7 @@ def vanilla_model(X_train):
 
     return model
 
-def build_model(hp):
+def build_model(hp, X_train):
     model = Sequential()
     model.add(InputLayer((X_train.shape[1], X_train.shape[2])))
     
@@ -55,7 +56,7 @@ def build_model(hp):
     )
     return model
 
-def build_model_vol1(hp):
+def build_model_vol1(hp, X_train):
     model = Sequential()
     model.add(InputLayer((X_train.shape[1], X_train.shape[2])))
     
