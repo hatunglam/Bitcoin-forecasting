@@ -8,7 +8,7 @@ from tensorflow.keras.metrics import RootMeanSquaredError
 from tensorflow.keras.optimizers import Adam
 import keras_tuner as kt
 
-def close_price_model(df, wind_size=30):
+def df_to_X_y(df, wind_size=30):
     df_np = df
     X = [] 
     y = []
