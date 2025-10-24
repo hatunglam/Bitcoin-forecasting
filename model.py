@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers  import *
 from tensorflow.keras.losses import MeanSquaredError 
